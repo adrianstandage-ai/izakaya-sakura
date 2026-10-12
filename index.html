@@ -1036,10 +1036,14 @@ const menuHTML=cardsArr.join('');const alsoHTML=alsoArr.join('');
 const getWA=()=>{try{return localStorage.getItem('omk_wa')||R.whatsapp||''}catch(e){return R.whatsapp||''}};
 const waUrl=(num,t)=>'https://wa.me/'+intl(num)+'?text='+encodeURIComponent(t);
 function waBtn(t,label){const n=getWA();return n?`<a class="btn" href="${waUrl(n,t)}" target="_blank" rel="noopener" style="width:100%;margin-top:6px">${esc(label||'Send to my WhatsApp')}</a><p class="hint">Opens WhatsApp on this phone with the message ready. Nothing is sent until you press send.</p>`:`<div class="waset" data-text="${esc(t)}" data-label="${esc(label||'')}"><label class="fld">Your WhatsApp number (for this demo)<input id="wan" type="tel" inputmode="tel" placeholder="07… or +44…"></label><button class="btn" data-act="wa-save" style="width:100%">Save number to enable WhatsApp</button><p class="hint">Saved on this phone only. Used only to open WhatsApp to you.</p></div>`}
-function saveWA(){const el=$id('wan');const v=(el&&el.value||'').trim();if(v.replace(/\D/g,'').length<10){if(el){el.classList.add('bad');el.focus()}return}
+function saveWA(){const el=$id('wan');const v=(el&&el.value||'').trim();
+ const say=(h)=>{let ok=$id('waok');if(!ok&&el){const w=el.closest('.waset')||el.parentNode;ok=document.createElement('p');ok.className='hint';ok.id='waok';w.appendChild(ok)}if(ok){ok.innerHTML=h;ok.scrollIntoView({behavior:'smooth',block:'center'})}};
+ if(v.replace(/\D/g,'').length<10){if(el){el.classList.add('bad');el.focus()}say('<b style="color:#e8a090">That number looks too short.</b> Type your full mobile number, for example 07700 900123.');return}
+ if(el)el.classList.remove('bad');
  try{localStorage.setItem('omk_wa',v)}catch(e){}
+ const inPanel=!!document.querySelector('[data-act=wa-save]');
  document.querySelectorAll('.waset').forEach(x=>{x.outerHTML=waBtn(x.dataset.text,x.dataset.label)});
- const ok=$id('waok');if(ok)ok.textContent='Saved. The WhatsApp buttons now open your WhatsApp.'}
+ if(inPanel){const bt=document.querySelector('[data-act=wa-save]');if(bt)bt.textContent='Saved ✓';say('<b>✓ Saved.</b> The WhatsApp buttons now open your WhatsApp.<a class="btn" href="'+waUrl(v,'Test message from my website demo')+'" target="_blank" rel="noopener" style="width:100%;margin-top:10px">Send myself a test message</a>')}}
 function waOrder(){const n=getWA();if(!n){openPanel('wa');return}
  const ids=Object.keys(cart).filter(k=>cart[k]>0);
  const t=ids.length?['NEW ORDER (website demo)',...ids.map(k=>cart[k]+' x '+items[k].name),'Total: '+money(total()),'Delivery or collection? Name and address:'].join('\n'):'Hi! I would like to place an order (delivery or collection).';
