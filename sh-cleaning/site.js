@@ -18,3 +18,9 @@ document.addEventListener('keydown',function(e){if(/INPUT|TEXTAREA|SELECT/.test(
 var seen=false;try{seen=sessionStorage.getItem('swh')}catch(e){}
 if(!seen){try{sessionStorage.setItem('swh','1')}catch(e){}var h=document.createElement('div');h.className='swh';h.textContent='← Swipe to move between pages →';document.body.appendChild(h);setTimeout(function(){h.style.opacity=0},3200);setTimeout(function(){h.remove()},3800)}
 })();
+
+(function(){function clean(){document.body.classList.remove('out-l','out-r')}
+window.addEventListener('pageshow',function(e){clean();if(e.persisted){document.querySelectorAll('.rv').forEach(function(el){el.classList.add('in')})}});
+document.addEventListener('visibilitychange',function(){if(!document.hidden)clean()});
+setTimeout(function(){document.querySelectorAll('.rv:not(.in)').forEach(function(el){el.classList.add('in')})},1800);
+})();
